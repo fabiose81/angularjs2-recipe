@@ -1,0 +1,113 @@
+
+<fieldset>
+    <legend>Receitas</legend>
+
+    <div *ngIf="alert && logModel.id == 0" class="alert {{alert}}" role="alert">
+        Erro ao carregar lista de receitas. 
+        <a href="#" class="alert-link" data-toggle="modal" data-target="#modalError">Veja o log de erros.</a>
+    </div>
+    <div *ngIf="alert && logModel.id == undefined && action == 'delete'"  class="alert {{alert}}" role="alert">Receita removida com sucesso.</div>
+    <button *ngIf="logModel.id == undefined || logModel.id > 0" type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#myModal" (click)="setObjects('new')">
+      Adicionar Receita
+    </button>
+    <br/>
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true"> 
+      <div  *ngFor="let recipe of recipes" class="panel panel-default">
+        <div class="panel-heading" role="tab" id="heading_{{recipe.id}}">
+          <h4 class="panel-title">
+            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse_{{recipe.id}}" aria-expanded="true"  > 
+            {{recipe.name}}
+            </a>
+          </h4>
+        </div>
+        <div id="collapse_{{recipe.id}}" class="panel-collapse collapse" role="tabpanel">
+          <div class="panel-body">
+            <fieldset>
+                <legend><h5>Ingredientes</h5></legend>
+                {{recipe.ingredients}}
+            </fieldset>
+            <br/>
+            <br/>
+            <fieldset>
+                <legend><h5>Modo de fazer</h5></legend>
+                {{recipe.directions}}
+            </fieldset>
+            
+            <hr/>
+                <button class="btn btn-default edit-recipe" data-toggle="modal" data-target="#myModal" (click)="load(recipe)" >
+                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                </button>
+                <button class="btn btn-danger" (click)="delete(recipe)">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+          </div>
+        </div>
+      </div> 
+    </div>
+    <form  #f="ngForm" (submit)="save($event)">
+        
+        <!-- Modal Formuláro-->
+        <div id="myModal" class="modal fade" tabindex="-1" role="dialog">
+          <div class="modal-dialog" role="document">     
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Receita</h4>
+                  </div>
+                  <div class="modal-body">
+
+                   <div *ngIf="logModel.id == undefined && recipe.id && action" class="alert {{alert}}"role="alert">{{msg}}</div>
+                  
+                    <div  *ngIf="logModel.id == 1 && logModel.body" class="alert {{alert}}" role="alert">
+                         Erro ao cadastrar receita. 
+                         <a href="#" class="alert-link" data-toggle="modal" data-target="#modalError">Veja o log de erros.</a>
+                    </div>
+
+                    <div class="form-group">
+                      <input type="text" class="form-control"  maxlength="100" required isEmpty [(ngModel)]="recipe.name" name="recipe_name"  id="inputName" placeholder="receita">
+
+                       <!-- <div *ngIf="f?.controls?.recipe_name?.hasError('isEmpty') && f?.controls?.recipe_name?.dirty" class="alert alert-danger">
+                          Vazio não vale !!!!
+                        </div>-->
+                    </div>        
+
+                    <div class="form-group">
+                        <textarea class="form-control" name="recipe_ingredients" required isEmpty [(ngModel)]="recipe.ingredients" id="inputIngredients" placeholder="ingredientes"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                      <textarea class="form-control" name="recipe_directions" required isEmpty  [(ngModel)]="recipe.directions" id="inputDirections" placeholder="preparo"></textarea>         
+                    </div>  
+
+                     
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                    <input type="submit" class="btn btn-primary" [disabled]="!f?.valid" value="Salvar"/>
+                  </div>
+                </div>
+          </div>
+        </div>
+
+        <!-- Modal Erro-->
+        <div class="modal fade" id="modalError" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Log de Error</h4>
+              </div>
+              <div class="modal-body">
+                {{logModel.body}}
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+    </form>
+</fieldset>
+
+
